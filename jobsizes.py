@@ -1,5 +1,5 @@
-import scandir,re,os
-p = re.compile(ur'^\d{5}')
+import scandir,re,os,sys,getopt
+p = re.compile(ur'^\d{3}')
 
 def convert_bytes(bytes):
         bytes = float(bytes)
@@ -32,10 +32,41 @@ def get_tree_size(path):
         pass
     return size
 
-root_dir = '/mnt/server01_jobs'
+def usage():
+    print "-h\t\t\t\t\tPrint this help message"
+    print "-r|--root=\t\t\tSet the root directory which to traverse. Be sure to quote paths with spaces."
+    print "-s|--sort=\t\t\tHow the final results short be sorted"
+    print "-f|--filter=\t\tA Python regex needle to filter top directories in root directory. Be sure to quote filter."
 
-for entry in scandir.scandir(root_dir):
-    if entry.is_dir(follow_symlinks=False) and re.search(p, entry.name):
-        print "Calculating Job Sizes For: %s" % entry.name
-        size = get_tree_size(os.path.join(root_dir, entry.name))
-        print convert_bytes(size)
+if __name__ == "__main__":
+    sort_opts = {
+        'name': 'name',
+        'size': 'size',
+        'date': 'date'
+    }
+
+    try:
+        opts, args = getopt.getopt(sys.argv[1:], "hrsf:d", ["help", "root=", "sort=", "filter="])
+    except getopt.GetoptError:
+        usage()
+        sys.exit(2)
+    else:
+        for opt, arg in opts:
+            if opt in ("-h", "--help"):
+                usage()
+                sys.exit()
+            elif opt == '-d':
+                global _debug
+                _debug = 1
+            elif opt in ("-r", "--root"):
+                root_dir = arg
+            elif opt in ("-s", "--sort"):
+                sort = sort_opts.get(arg, 'size')
+            elif opt in ("-f", "--filter"):
+                needle = arg
+
+    for entry in scandir.scandir(root_dir):
+        if entry.is_dir(follow_symlinks=False) and re.search(p, entry.name):
+            print "Calculating Job Sizes For: %s" % entry.name
+            size = get_tree_size(os.path.join(root_dir, entry.name))
+            print convert_bytes(size)
