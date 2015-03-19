@@ -1,4 +1,4 @@
-import scandir,re,os,sys,getopt
+import scandir,re,os,sys,getopt,operator
 p = re.compile(ur'^\d{3}')
 
 def convert_bytes(bytes):
@@ -42,7 +42,8 @@ if __name__ == "__main__":
     sort_opts = {
         'name': 'name',
         'size': 'size',
-        'date': 'date'
+        'date': 'date',
+        'none': 'none'
     }
 
     try:
@@ -51,6 +52,7 @@ if __name__ == "__main__":
         usage()
         sys.exit(2)
     else:
+        needle = ''
         for opt, arg in opts:
             if opt in ("-h", "--help"):
                 usage()
@@ -64,9 +66,19 @@ if __name__ == "__main__":
                 sort = sort_opts.get(arg, 'size')
             elif opt in ("-f", "--filter"):
                 needle = arg
+    jobs = {}
+    for top_dir in scandir.scandir(root_dir):
+        if (top_dir.is_dir(follow_symlinks=False) and re.search(p, top_dir.name)) or (needle is not None and top_dir.is_dir(follow_symlinks=False)):
+            print "Calculating Job Sizes For: %s" % top_dir.name
+            size = get_tree_size(os.path.join(root_dir, top_dir.name))
+            jobs[top_dir.name] = size
 
-    for entry in scandir.scandir(root_dir):
-        if entry.is_dir(follow_symlinks=False) and re.search(p, entry.name):
-            print "Calculating Job Sizes For: %s" % entry.name
-            size = get_tree_size(os.path.join(root_dir, entry.name))
-            print convert_bytes(size)
+    if sort == 'name':
+        for job in sorted(jobs.items(), key=operator.itemgetter(0).lower()):
+            print "%s: %s" % (job[0], convert_bytes(job[1]))
+    elif sort == 'size':
+        for job in sorted(jobs.items(), key=operator.itemgetter(1), reverse=True):
+            print "%s: %s" % (job[0], convert_bytes(job[1]))
+    else:
+        for job in jobs:
+            print "%s: %s" % (job, convert_bytes(jobs[job]))
