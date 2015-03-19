@@ -33,10 +33,10 @@ def get_tree_size(path):
     return size
 
 def usage():
-    print "-h\t\t\t\t\tPrint this help message"
-    print "-r|--root=\t\t\tSet the root directory which to traverse. Be sure to quote paths with spaces."
-    print "-s|--sort=\t\t\tHow the final results short be sorted"
-    print "-f|--filter=\t\tA Python regex needle to filter top directories in root directory. Be sure to quote filter."
+    print "-h\t\t\t\tPrint this help message"
+    print "--root=\t\t\tSet the root directory which to traverse. Be sure to quote paths with spaces."
+    print "--sort=\t\t\tHow the final results short be sorted"
+    print "--filter=\t\tA Python regex needle to filter top directories in root directory. Be sure to quote filter."
 
 if __name__ == "__main__":
     sort_opts = {
