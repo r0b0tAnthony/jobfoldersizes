@@ -72,13 +72,17 @@ if __name__ == "__main__":
             print "Calculating Job Sizes For: %s" % top_dir.name
             size = get_tree_size(os.path.join(root_dir, top_dir.name))
             jobs[top_dir.name] = size
+    max_name = max(len(s) for s in  jobs.keys())
+    row_format_tabbing = "{:<%d}" % (max_name + 10)
+    row_format =row_format_tabbing * 2
+    print row_format.format(*{'Job', 'Size'})
 
     if sort == 'name':
-        for job in sorted(jobs.items(), key=operator.itemgetter(0).lower()):
-            print "%s: %s" % (job[0], convert_bytes(job[1]))
+        for job in sorted(jobs.items(), key=lambda (k,v): (k.lower(), v)):
+            print row_format.format(job[0], convert_bytes(job[1]))
     elif sort == 'size':
         for job in sorted(jobs.items(), key=operator.itemgetter(1), reverse=True):
-            print "%s: %s" % (job[0], convert_bytes(job[1]))
+            print row_format.format(job[0], convert_bytes(job[1]))
     else:
         for job in jobs:
-            print "%s: %s" % (job, convert_bytes(jobs[job]))
+            print row_format.format(job, convert_bytes(jobs[job]))
