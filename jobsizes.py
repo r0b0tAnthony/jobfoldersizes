@@ -67,9 +67,19 @@ if __name__ == "__main__":
                 needle = arg
     jobs = {}
     p = re.compile(needle)
+
+    if _debug:
+        if scandir.scandir == getattr(scandir, 'scandir_c', None):
+            print('Using fast C version of scandir')
+        elif scandir.scandir == getattr(scandir, 'scandir_python', None):
+            print('Using slower ctypes version of scandir')
+        elif scandir.scandir == scandir.scandir_generic:
+            print('Using very slow generic version of scandir')
+
     for top_dir in scandir.scandir(root_dir):
         if (top_dir.is_dir(follow_symlinks=False) and re.search(p, top_dir.name)) or (needle is None and top_dir.is_dir(follow_symlinks=False)):
-            print "Calculating Job Sizes For: %s" % top_dir.name
+            if _debug:
+                print "Calculating Job Sizes For: %s" % top_dir.name
             size = get_tree_size(os.path.join(root_dir, top_dir.name))
             jobs[top_dir.name] = size
     if len(jobs) > 0:
