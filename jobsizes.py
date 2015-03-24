@@ -44,7 +44,9 @@ if __name__ == "__main__":
         'date': 'date',
         'none': 'none'
     }
-
+    global _debug
+    _debug = False
+    
     try:
         opts, args = getopt.getopt(sys.argv[1:], "hrsf:d", ["help", "root=", "sort=", "filter="])
     except getopt.GetoptError:
@@ -57,8 +59,7 @@ if __name__ == "__main__":
                 usage()
                 sys.exit()
             elif opt == '-d':
-                global _debug
-                _debug = 1
+                _debug = True
             elif opt in ("-r", "--root"):
                 root_dir = arg
             elif opt in ("-s", "--sort"):
