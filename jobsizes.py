@@ -46,14 +46,15 @@ if __name__ == "__main__":
     }
     global _debug
     _debug = False
-    
+
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "hrsf:d", ["help", "root=", "sort=", "filter="])
+        opts, args = getopt.getopt(sys.argv[1:], "hrsfo:d", ["help", "root=", "sort=", "filter=", "output="])
     except getopt.GetoptError:
         usage()
         sys.exit(2)
     else:
         needle = ''
+        output = 'terminal'
         for opt, arg in opts:
             if opt in ("-h", "--help"):
                 usage()
@@ -66,6 +67,8 @@ if __name__ == "__main__":
                 sort = sort_opts.get(arg, 'size')
             elif opt in ("-f", "--filter"):
                 needle = arg
+            elif opt in ("-o", "--output"):
+                output = arg
     jobs = {}
     p = re.compile(needle)
 
@@ -84,19 +87,30 @@ if __name__ == "__main__":
             size = get_tree_size(os.path.join(root_dir, top_dir.name))
             jobs[top_dir.name] = size
     if len(jobs) > 0:
-        max_name = max(len(s) for s in  jobs.keys())
-        row_format_tabbing = "{:<%d}" % (max_name + 10)
-        row_format =row_format_tabbing * 2
-        print row_format.format(*{'Job', 'Size'})
-
-        if sort == 'name':
-            for job in sorted(jobs.items(), key=lambda (k,v): (k.lower(), v)):
-                print row_format.format(job[0], convert_bytes(job[1]))
-        elif sort == 'size':
-            for job in sorted(jobs.items(), key=operator.itemgetter(1), reverse=True):
-                print row_format.format(job[0], convert_bytes(job[1]))
+        if output == 'email':
+            if sort == 'name':
+                for job in sorted(jobs.items(), key=lambda (k,v): (k.lower(), v)):
+                    print "%s: \t%s" % (job[0], convert_bytes(job[1]))
+            elif sort == 'size':
+                for job in sorted(jobs.items(), key=operator.itemgetter(1), reverse=True):
+                    print "%s: \t%s" % (job[0], convert_bytes(job[1]))
+            else:
+                for job in jobs:
+                    print "%s: \t%s" % (job, convert_bytes(job[job]))
         else:
-            for job in jobs:
-                print row_format.format(job, convert_bytes(jobs[job]))
+            max_name = max(len(s) for s in  jobs.keys())
+            row_format_tabbing = "{:<%d}" % (max_name + 10)
+            row_format =row_format_tabbing * 2
+            print row_format.format(*{'Job', 'Size'})
+
+            if sort == 'name':
+                for job in sorted(jobs.items(), key=lambda (k,v): (k.lower(), v)):
+                    print row_format.format(job[0], convert_bytes(job[1]))
+            elif sort == 'size':
+                for job in sorted(jobs.items(), key=operator.itemgetter(1), reverse=True):
+                    print row_format.format(job[0], convert_bytes(job[1]))
+            else:
+                for job in jobs:
+                    print row_format.format(job, convert_bytes(jobs[job]))
     else:
         print "No Jobs Found or No Jobs matching the filter '%s'" % needle
