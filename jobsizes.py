@@ -36,6 +36,7 @@ def usage():
     print "--root=\t\t\tSet the root directory which to traverse. Be sure to quote paths with spaces."
     print "--sort=\t\t\tHow the final results short be sorted"
     print "--filter=\t\tA Python regex needle to filter top directories in root directory. Be sure to quote filter."
+    print "--output=\t\tSet the output type. Current options are terminal or email. Default is terminal"
 
 if __name__ == "__main__":
     sort_opts = {
@@ -90,13 +91,13 @@ if __name__ == "__main__":
         if output == 'email':
             if sort == 'name':
                 for job in sorted(jobs.items(), key=lambda (k,v): (k.lower(), v)):
-                    print "%s: \t%s" % (job[0], convert_bytes(job[1]))
+                    print "%s:\t%s" % (job[0], convert_bytes(job[1]))
             elif sort == 'size':
                 for job in sorted(jobs.items(), key=operator.itemgetter(1), reverse=True):
-                    print "%s: \t%s" % (job[0], convert_bytes(job[1]))
+                    print "%s:\t%s" % (job[0], convert_bytes(job[1]))
             else:
                 for job in jobs:
-                    print "%s: \t%s" % (job, convert_bytes(job[job]))
+                    print "%s:\t%s" % (job, convert_bytes(job[job]))
         else:
             max_name = max(len(s) for s in  jobs.keys())
             row_format_tabbing = "{:<%d}" % (max_name + 10)
