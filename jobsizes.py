@@ -56,6 +56,7 @@ if __name__ == "__main__":
     else:
         needle = ''
         output = 'terminal'
+        sort = 'size'
         for opt, arg in opts:
             if opt in ("-h", "--help"):
                 usage()
