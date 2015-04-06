@@ -1,4 +1,4 @@
-import scandir,re,os,sys,getopt,operator
+import scandir,re,os,sys,getopt,operator,subprocess
 
 def convert_bytes(bytes):
         bytes = float(bytes)
@@ -17,6 +17,21 @@ def convert_bytes(bytes):
         else:
             size = '%.2fb' % bytes
         return size
+
+def get_disks():
+    caller_platform = sys.platform.lower()
+    if caller_platform.startswith('linux') or caller_platform.startswith('darwin'):
+        try:
+            return subprocess.check_output(['df', '-h'], stderr=subprocess.STDOUT)
+        except subprocess.CalledProcessError as e:
+            print ("Could not computer disk sizes because: %s" % e)
+
+    elif caller_platform.startswith('windows'):
+        import csv
+        try:
+            logical_disks =  subprocess.check_output('wmic LogicalDisk Where (DriveType = 3 or DriveType = 4) Get DeviceID, FreeSpace, Size /Format:csv')
+        except subprocess.CalledProcessError as e:
+            print ("Could not computer disk sizes because: %s" % e)
 
 def get_tree_size(path):
     """Return total size of all files in directory tree at path."""
@@ -116,3 +131,5 @@ if __name__ == "__main__":
                     print row_format.format(job, convert_bytes(jobs[job]))
     else:
         print "No Jobs Found or No Jobs matching the filter '%s'" % needle
+    print "\n\nDisk Info:"
+    print get_disks()
