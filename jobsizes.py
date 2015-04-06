@@ -26,10 +26,16 @@ def get_disks():
         except subprocess.CalledProcessError as e:
             print ("Could not computer disk sizes because: %s" % e)
 
-    elif caller_platform.startswith('windows'):
+    elif caller_platform.startswith('win'):
+        print caller_platform
         import csv
         try:
             logical_disks =  subprocess.check_output('wmic LogicalDisk Where (DriveType = 3 or DriveType = 4) Get DeviceID, FreeSpace, Size /Format:csv')
+            reader = csv.DictReader(logical_disks.split('\n')[1:-1], delimiter=',')
+            print 'Drive\t\tCapacity\t\tFree\t\t% Used'
+            for row in reader:
+                percent = (float(row['FreeSpace'])/float(row['Size'])) * 100
+                print '%s\t\t%s\t\t%s\t\t%0.2f' % (row['DeviceID'], convert_bytes(row['Size']), convert_bytes(row['FreeSpace']), percent)
         except subprocess.CalledProcessError as e:
             print ("Could not computer disk sizes because: %s" % e)
 
