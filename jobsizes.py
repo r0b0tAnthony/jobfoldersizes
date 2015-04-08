@@ -70,7 +70,7 @@ if __name__ == "__main__":
     _debug = False
 
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "hrsfo:d", ["help", "root=", "sort=", "filter=", "output="])
+        opts, args = getopt.getopt(sys.argv[1:], "hcrsfo:d", ["help", "capacity", "root=", "sort=", "filter=", "output="])
     except getopt.GetoptError:
         usage()
         sys.exit(2)
@@ -78,10 +78,13 @@ if __name__ == "__main__":
         needle = ''
         output = 'terminal'
         sort = 'size'
+        capacity = False
         for opt, arg in opts:
             if opt in ("-h", "--help"):
                 usage()
                 sys.exit()
+            elif opt in ('-c', '--capacity'):
+                capacity = True
             elif opt == '-d':
                 _debug = True
             elif opt in ("-r", "--root"):
@@ -137,5 +140,6 @@ if __name__ == "__main__":
                     print row_format.format(job, convert_bytes(jobs[job]))
     else:
         print "No Jobs Found or No Jobs matching the filter '%s'" % needle
-    print "\n\nDisk Info:"
-    print get_disks()
+    if capacity:
+        print "\n\nDisk Capacity Info:"
+        print get_disks()
