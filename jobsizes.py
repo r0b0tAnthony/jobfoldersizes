@@ -22,7 +22,7 @@ def get_disks():
     caller_platform = sys.platform.lower()
     if caller_platform.startswith('linux') or caller_platform.startswith('darwin'):
         try:
-            return subprocess.check_output(['df', '-hP'], stderr=subprocess.STDOUT)
+            return subprocess.check_output(['df', '-h'], stderr=subprocess.STDOUT)
         except subprocess.CalledProcessError as e:
             print ("Could not computer disk sizes because: %s" % e)
 
