@@ -13,6 +13,11 @@ This relies on [scandir](https://pypi.python.org/pypi/scandir). Scandir you can 
 ### Set Up ###
 1. Check your system that you have at least Python 2.7.6. This is the minimum version that scandir has been tested on.
 2. Install scandir either thru pip, manually, or use Python 3.5.x
+
+Python 2.7.x:
+
+`pip install -r requirements.txt`
+
 3. Once installed run the python script `jobsizes.py --root=/path/to/root` and other flags
 
 ### Flags ###
