@@ -2,7 +2,7 @@
 
 ### What is this repository for? ###
 
-* jobfoldersizes is a python tool that utilizes the scandir python module to calculate the folder sizes of a desired root directory. Using scandir can increase the efficency over 2.7.x os.walk methods significantly. jobfoldersizes also adds additional filtering and sorting for your results.
+* jobfoldersizes is a python command line tool that utilizes the scandir python module to calculate the folder sizes of a desired root directory. Using scandir can increase the efficency over 2.7.x os.walk methods significantly. jobfoldersizes also adds additional filtering and sorting for your results.
 * Version: 1.0
 
 ## How do I get set up? ##
